@@ -1,3 +1,10 @@
+/*
+port*****bit*****input/output*****function
+rst      1       input            reset signal
+clk      1       input            clock signal
+pc       32      output           fetching the address
+ce       1       output           enable register of program counter
+*/
 `include "define.v"
 
 module pc_reg (
