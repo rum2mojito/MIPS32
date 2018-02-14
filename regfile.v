@@ -1,5 +1,16 @@
 /*
-port*****
+port*****bit*****input/output*****function
+rst      1       input            reset signal / high volt valid
+clk      1       input            clock signal
+waddr    5       input            the register to be written
+wdata    32      input            the data to write
+we       1       input            write enable signal
+raddr1   5       input            first register to be read
+re1      1       input            read enable signal
+rdata1   32      output           output the data in register
+raddr2   5       input            second register to  be read
+re2      1       input            read enable signal
+rdata2   32      output           output the data in register
 */
 `include "define.v"
 
