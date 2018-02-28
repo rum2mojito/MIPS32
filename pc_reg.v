@@ -1,11 +1,4 @@
-/*
-port*****bit*****input/output*****function
-rst      1       input            reset signal
-clk      1       input            clock signal
-pc       32      output           fetching the address
-ce       1       output           enable register of program counter
-*/
-`include "define.v"
+`include "C:/Users/YU-WEI/Desktop/DigitalDesignLab/mips32/define.v"
 
 module pc_reg (
 	input wire clk, //clock signal
@@ -31,4 +24,5 @@ module pc_reg (
 		end
 	end
 	
-endmodule			
+endmodule
+				

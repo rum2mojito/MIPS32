@@ -1,4 +1,4 @@
-`include "define.v"
+`include "C:/Users/YU-WEI/Desktop/DigitalDesignLab/mips32/define.v"
 
 module id_ex(
 	input wire clk,

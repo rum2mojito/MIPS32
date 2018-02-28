@@ -1,14 +1,4 @@
-/*
-port*****bit*****input/output*****function
-rst      1       input            reset signal
-clk      1       input            clock signal
-if_pc    32      input            address of the instruction
-if_inst  32      input            fetched instruction
-id_pc    32      output           address of the instruction
-id_inst  32      output           instruction for decoding
-*/
-`include "define.v"
-
+`include "C:/Users/YU-WEI/Desktop/DigitalDesignLab/mips32/define.v"
 module if_id(
 	input wire clk,
 	input wire rst,

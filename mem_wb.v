@@ -1,3 +1,5 @@
+`include "C:/Users/YU-WEI/Desktop/DigitalDesignLab/mips32/define.v"
+
 module mem_wb (
 	input wire clk,
 	input wire rst,

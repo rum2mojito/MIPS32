@@ -1,6 +1,6 @@
 // ***** global define *****
 `define RstEnable 1'b1 //enable reset signal
-`define RstDiable 1'b0 //disable reset signal
+`define RstDisable 1'b0 //disable reset signal
 `define ZeroWord 32'h00000000 //set 32-bits zero
 `define WriteEnable 1'b1 //enable write
 `define WriteDisable 1'b0 //disable write
@@ -30,8 +30,8 @@
 // ***** ROM *****
 `define InstAddrBus 31:0 //length of address
 `define InstBus 31:0
-`define InstMemNun 131071 //size of ROM is 128KB
-`define InstMemNunLog2 17
+`define InstMemNum 131071 //size of ROM is 128KB
+`define InstMemNumLog2 17
 
 // ***** Regfile *****
 `define RegAddrBus 4:0 //length of address of Regfile

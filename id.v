@@ -1,22 +1,4 @@
-/*
-port**********bit*****input/output*****function
-rst           1       input            reset signal
-pc_i          32      input            decoding instruction's address
-inst_i        32      input            instruction for decoding
-reg1_data_i   32      input            the data from regfile's first register
-reg2_data_i   32      input            the data from regfile's second register
-reg1_read_o   1       output           read enable signal form regfile's first register
-reg2_read_o   1       output           read enable signal form regfile's second register
-reg1_addr_o   5       output           the address of regfile's first register
-reg2_addr_o   5       output           the address of regfile's second register
-aluop_o       8       output           operation type
-alusel_o      3       output           selction type
-reg1_o        32      output           
-reg2_o        32      output           
-wd_o          5       output           destination address to be write
-wreg_o        1       output           whethere the instruction is written into the register or not
-*/
-`include "define.v"
+`include "C:/Users/YU-WEI/Desktop/DigitalDesignLab/mips32/define.v"
 
 module id(
 	input wire rst,
@@ -98,6 +80,9 @@ module id(
 				
 				// need immediate number
 				imm <= {16'h0, inst_i[15:0]};
+				
+				// writeback destination
+				wd_o <= inst_i[20:16];
 				
 				// ori's instruction is valid
 				instvalid <= `InstValid;
