@@ -34,21 +34,33 @@ module mips_32 (
 	wire ex_wreg_o;
 	wire[`RegAddrBus] ex_wd_o;
 	wire[`RegBus] ex_wdata_o;
+	wire[`RegBus] ex_hi_o;
+	wire[`RegBus] ex_lo_o;
+	wire ex_whilo_o;
 	
 	// connect EX/MEM with MEM
 	wire mem_wreg_i;
 	wire[`RegAddrBus] mem_wd_i;
 	wire[`RegBus] mem_wdata_i;
+	wire[`RegBus] mem_hi_i;
+	wire[`RegBus] mem_lo_i;
+	wire mem_whilo_i;	
 	
 	// connect MEM with MEM/WB
 	wire mem_wreg_o;
 	wire[`RegAddrBus] mem_wd_o;
 	wire[`RegBus] mem_wdata_o;
+	wire[`RegBus] mem_hi_o;
+	wire[`RegBus] mem_lo_o;
+	wire mem_whilo_o;
 	
 	// connect MEM/WB with writeback
 	wire wb_wreg_i;
 	wire[`RegAddrBus] wb_wd_i;
 	wire[`RegBus] wb_wdata_i;
+	wire[`RegBus] wb_hi_i;
+	wire[`RegBus] wb_lo_i;
+	wire wb_whilo_i;
 	
 	// connect ID with Regfile
 	wire reg1_read;
@@ -57,6 +69,10 @@ module mips_32 (
 	wire[`RegBus] reg2_data;
 	wire[`RegAddrBus] reg1_addr;
 	wire[`RegAddrBus] reg2_addr;
+	
+	// connect MEM with HI/LO
+	wire[`RegBus] 	hi;
+	wire[`RegBus]   lo;
 	
 	// pc_reg initial
 	pc_reg pc_reg0 (
@@ -162,11 +178,25 @@ module mips_32 (
 		.reg2_i(ex_reg2_i),
 		.wd_i(ex_wd_i), 
 		.wreg_i(ex_wreg_i),
+		.hi_i(hi),
+		.lo_i(lo),
+		
+		// HI/LO
+		.wb_hi_i(wb_hi_i),
+	    .wb_lo_i(wb_lo_i),
+	    .wb_whilo_i(wb_whilo_i),
+	    .mem_hi_i(mem_hi_o),
+	    .mem_lo_i(mem_lo_o),
+	    .mem_whilo_i(mem_whilo_o),
 		
 		// sending to EX/MEM
 		.wd_o(ex_wd_o), 
 		.wreg_o(ex_wreg_o),
-		.wdata_o(ex_wdata_o)
+		.wdata_o(ex_wdata_o),
+		
+		.hi_o(ex_hi_o),
+		.lo_o(ex_lo_o),
+		.whilo_o(ex_whilo_o)
 	);
 	
 	// EX/MEM initial
@@ -178,11 +208,17 @@ module mips_32 (
 		.ex_wd(ex_wd_o), 
 		.ex_wreg(ex_wreg_o),
 		.ex_wdata(ex_wdata_o),
+		.ex_hi(ex_hi_o),
+		.ex_lo(ex_lo_o),
+		.ex_whilo(ex_whilo_o),
 		
 		// sending to MEM
 		.mem_wd(mem_wd_i), 
 		.mem_wreg(mem_wreg_i),
-		.mem_wdata(mem_wdata_i)
+		.mem_wdata(mem_wdata_i),
+		.mem_hi(mem_hi_i),
+		.mem_lo(mem_lo_i),
+		.mem_whilo(mem_whilo_i)
 	);
 	
 	// MEM initial
@@ -193,11 +229,17 @@ module mips_32 (
 		.wd_i(mem_wd_i), 
 		.wreg_i(mem_wreg_i),
 		.wdata_i(mem_wdata_i),
+		.hi_i(mem_hi_i),
+		.lo_i(mem_lo_i),
+		.whilo_i(mem_whilo_i),
 		
 		// sending to MEM/WB
 		.wd_o(mem_wd_o), 
 		.wreg_o(mem_wreg_o),
-		.wdata_o(mem_wdata_o)
+		.wdata_o(mem_wdata_o),
+		.hi_o(mem_hi_o),
+		.lo_o(mem_lo_o),
+		.whilo_o(mem_whilo_o)
 	);
 	
 	// MEM/WB initial
@@ -209,11 +251,31 @@ module mips_32 (
 		.mem_wd(mem_wd_o), 
 		.mem_wreg(mem_wreg_o),
 		.mem_wdata(mem_wdata_o),
+		.mem_hi(mem_hi_o),
+		.mem_lo(mem_lo_o),
+		.mem_whilo(mem_whilo_o),
 		
 		// sending to write
 		.wb_wd(wb_wd_i), 
 		.wb_wreg(wb_wreg_i),
-		.wb_wdata(wb_wdata_i)
+		.wb_wdata(wb_wdata_i),
+		.wb_hi(wb_hi_i),
+		.wb_lo(wb_lo_i),
+		.wb_whilo(wb_whilo_i)
+	);
+	
+	hilo_reg hilo_reg0(
+		.clk(clk),
+		.rst(rst),
+	
+		// write port
+		.we(wb_whilo_i),
+		.hi_i(wb_hi_i),
+		.lo_i(wb_lo_i),
+	
+		// read port
+		.hi_o(hi),
+		.lo_o(lo)	
 	);
 	
 endmodule
