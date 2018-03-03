@@ -31,7 +31,9 @@ module id(
 	// result of mem
 	input wire mem_wreg_i,
 	input wire[`RegBus] mem_wdata_i,
-	input wire[`RegAddrBus] mem_wd_i
+	input wire[`RegAddrBus] mem_wd_i,
+	
+	output wire	stallreq
 );
 
 	// get function code and operation code
@@ -46,6 +48,8 @@ module id(
 	
 	// save instruction is valid or not
 	reg instvalid;
+	
+	assign stallreq = `NoStop;
 	
 	// step 1: decode the instruction
 	always @ (*) begin
@@ -257,6 +261,38 @@ module id(
 									reg2_read_o <= 1'b1; 
 									instvalid <= `InstValid;	
 								end
+								`EXE_MADD:		begin
+									wreg_o <= `WriteDisable;		
+									aluop_o <= `EXE_MADD_OP;
+									alusel_o <= `EXE_RES_MUL; 
+									reg1_read_o <= 1'b1;	
+									reg2_read_o <= 1'b1;	  			
+									instvalid <= `InstValid;	
+								end
+								`EXE_MADDU:		begin
+									wreg_o <= `WriteDisable;		
+									aluop_o <= `EXE_MADDU_OP;
+									alusel_o <= `EXE_RES_MUL; 
+									reg1_read_o <= 1'b1;	
+									reg2_read_o <= 1'b1;	  			
+									instvalid <= `InstValid;	
+								end
+								`EXE_MSUB:		begin
+									wreg_o <= `WriteDisable;
+									aluop_o <= `EXE_MSUB_OP;
+									alusel_o <= `EXE_RES_MUL; 
+									reg1_read_o <= 1'b1;	
+									reg2_read_o <= 1'b1;	  			
+									instvalid <= `InstValid;	
+								end
+								`EXE_MSUBU:		begin
+									wreg_o <= `WriteDisable;
+									aluop_o <= `EXE_MSUBU_OP;
+									alusel_o <= `EXE_RES_MUL; 
+									reg1_read_o <= 1'b1;	
+									reg2_read_o <= 1'b1;	  			
+									instvalid <= `InstValid;	
+								end
 								default:	begin
 								end
 						  endcase
@@ -393,6 +429,38 @@ module id(
 							reg1_read_o <= 1'b1;	
 							reg2_read_o <= 1'b1;	
 		  				    instvalid <= `InstValid;	  			
+						end
+						`EXE_MADD:		begin
+							wreg_o <= `WriteDisable;		
+							aluop_o <= `EXE_MADD_OP;
+							alusel_o <= `EXE_RES_MUL; 
+							reg1_read_o <= 1'b1;	
+							reg2_read_o <= 1'b1;	  			
+							instvalid <= `InstValid;	
+						end
+						`EXE_MADDU:		begin
+							wreg_o <= `WriteDisable;
+							aluop_o <= `EXE_MADDU_OP;
+							alusel_o <= `EXE_RES_MUL; 
+							reg1_read_o <= 1'b1;	
+							reg2_read_o <= 1'b1;	  			
+							instvalid <= `InstValid;	
+						end
+						`EXE_MSUB:		begin
+							wreg_o <= `WriteDisable;
+							aluop_o <= `EXE_MSUB_OP;
+							alusel_o <= `EXE_RES_MUL; 
+							reg1_read_o <= 1'b1;	
+							reg2_read_o <= 1'b1;	  			
+							instvalid <= `InstValid;	
+						end
+						`EXE_MSUBU:		begin
+							wreg_o <= `WriteDisable;
+							aluop_o <= `EXE_MSUBU_OP;
+							alusel_o <= `EXE_RES_MUL; 
+							reg1_read_o <= 1'b1;	
+							reg2_read_o <= 1'b1;	  			
+							instvalid <= `InstValid;	
 						end
 						default:	begin
 						end
