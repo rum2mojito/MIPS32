@@ -1,7 +1,7 @@
 # MIPS32
 ## instruction
 | Mnemonic | Meaning | Type | Opcode | Funct |
-|
+|-|-|-|-|-|
 | <code>add</code> | Add | R | 0x00 | 0x20 |
 | <code>addi</code> | Add Immediate | I | 0x08 | NA |
 | <code>addiu</code> | Add Unsigned Immediate | I | 0x09 | NA|
