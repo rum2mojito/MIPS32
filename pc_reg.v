@@ -3,6 +3,7 @@
 module pc_reg (
 	input wire clk, //clock signal
 	input wire rst, //reset signal
+	input wire[5:0] stall, // stall signal
 	
 	output reg[`InstAddrBus] pc, //program counter
 	output reg ce // !!!???
@@ -19,7 +20,7 @@ module pc_reg (
 	always @ (posedge clk) begin
 		if (ce == `ChipDisable) begin
 			pc <= 32'h00000000;
-		end else begin
+		end else if (stall[0] == `NoStop) begin
 			pc <= pc + 4'h4;
 		end
 	end
