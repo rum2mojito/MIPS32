@@ -1,5 +1,6 @@
 # MIPS32
-* instruction
+***
+## instruction
 | Mnemonic | Meaning | Type | Opcode | Funct |
 |-|-|-|-|-|
 | <code>add</code> | Add | R | 0x00 | 0x20 |
