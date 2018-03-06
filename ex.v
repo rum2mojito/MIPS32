@@ -25,6 +25,10 @@ module ex (
 	input wire[`RegBus]           mem_lo_i,
 	input wire                    mem_whilo_i,
 	
+	// import from div.v
+	input wire[`DoubleRegBus] div_result_i,
+	input wire div_ready_i,
+	
 	input wire[`DoubleRegBus] hilo_temp_i,
 	input wire[1:0] cnt_i,
 	
@@ -36,6 +40,12 @@ module ex (
 	output reg[`RegBus]           hi_o,
 	output reg[`RegBus]           lo_o,
 	output reg                    whilo_o,
+	
+	// output to div.v
+	output reg[`RegBus] div_opdata1_o,
+	output reg[`RegBus] div_opdata2_o,
+	output reg div_start_o,
+	output reg signed_div_o,
 	
 	output reg[`DoubleRegBus] hilo_temp_o,
 	output reg[1:0] cnt_o,
@@ -61,6 +71,7 @@ module ex (
 	wire[`DoubleRegBus] hilo_temp;
 	reg[`DoubleRegBus] hilo_temp1;
 	reg stallreq_for_madd_msub;
+	reg stallreq_for_div;
 	
 	// step 1: compute via aluop_i's operation, but there is only OR
 	always @ (*) begin
@@ -210,7 +221,7 @@ module ex (
 	end
 	
 	always @ (*) begin
-		stallreq = stallreq_for_madd_msub;
+		stallreq = stallreq_for_madd_msub || stallreq_for_div;
 	end
 	
 	// MADD、MADDU、MSUB、MSUBU instruction
@@ -281,6 +292,69 @@ module ex (
 	  end
 	end
 	
+	//DIV、DIVU instruction
+	always @ (*) begin
+		if(rst == `RstEnable) begin
+			stallreq_for_div <= `NoStop;
+			div_opdata1_o <= `ZeroWord;
+			div_opdata2_o <= `ZeroWord;
+			div_start_o <= `DivStop;
+			signed_div_o <= 1'b0;
+		end else begin
+			stallreq_for_div <= `NoStop;
+	        div_opdata1_o <= `ZeroWord;
+			div_opdata2_o <= `ZeroWord;
+			div_start_o <= `DivStop;
+			signed_div_o <= 1'b0;
+			case (aluop_i) 
+				`EXE_DIV_OP:		begin
+					if(div_ready_i == `DivResultNotReady) begin
+	    			   div_opdata1_o <= reg1_i;
+						div_opdata2_o <= reg2_i;
+						div_start_o <= `DivStart;
+						signed_div_o <= 1'b1;
+						stallreq_for_div <= `Stop;
+					end else if(div_ready_i == `DivResultReady) begin
+						div_opdata1_o <= reg1_i;
+						div_opdata2_o <= reg2_i;
+						div_start_o <= `DivStop;
+						signed_div_o <= 1'b1;
+						stallreq_for_div <= `NoStop;
+					end else begin						
+						div_opdata1_o <= `ZeroWord;
+						div_opdata2_o <= `ZeroWord;
+						div_start_o <= `DivStop;
+						signed_div_o <= 1'b0;
+						stallreq_for_div <= `NoStop;
+					end					
+				end
+				`EXE_DIVU_OP:		begin
+					if(div_ready_i == `DivResultNotReady) begin
+						div_opdata1_o <= reg1_i;
+						div_opdata2_o <= reg2_i;
+						div_start_o <= `DivStart;
+						signed_div_o <= 1'b0;
+						stallreq_for_div <= `Stop;
+					end else if(div_ready_i == `DivResultReady) begin
+						div_opdata1_o <= reg1_i;
+						div_opdata2_o <= reg2_i;
+						div_start_o <= `DivStop;
+						signed_div_o <= 1'b0;
+						stallreq_for_div <= `NoStop;
+					end else begin						
+						div_opdata1_o <= `ZeroWord;
+						div_opdata2_o <= `ZeroWord;
+						div_start_o <= `DivStop;
+						signed_div_o <= 1'b0;
+						stallreq_for_div <= `NoStop;
+					end					
+				end
+				default: begin
+				end
+			endcase
+		end
+	end
+	
 	// step 2: select the result from MUX
 	always @ (*) begin
 		wd_o <= wd_i;
@@ -337,6 +411,10 @@ module ex (
 			whilo_o <= `WriteEnable;
 			hi_o <= hilo_temp1[63:32];
 			lo_o <= hilo_temp1[31:0];
+		end else if((aluop_i == `EXE_DIV_OP) || (aluop_i == `EXE_DIVU_OP)) begin
+			whilo_o <= `WriteEnable;
+			hi_o <= div_result_i[63:32];
+			lo_o <= div_result_i[31:0];
 		end else if(aluop_i == `EXE_MTLO_OP) begin
 			whilo_o <= `WriteEnable;
 			hi_o <= HI;
